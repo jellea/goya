@@ -74,8 +74,6 @@
                         :onClick (fn [e] (put! toolchan :selection))}
           (omdom/i #js {:className "icon-move"}))))))
 
-
-
 (defn tools-menu-component [app owner]
   (reify
     om/IInitState

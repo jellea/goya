@@ -25,7 +25,6 @@
 
 (def preview-canvas-elem (. js/document (getElementById "preview-canvas")))
 
-
 ;; =============================================================================
 ;; it seems like it's too slow to use component local state for this. Hence,
 ;; it's living on its own in this external atom. Needs a second look.
@@ -426,7 +425,8 @@
               screen-canvas-height (* doc-canvas-height zoom-factor)]
         (set! (.-width preview-canvas-elem) screen-canvas-width)
         (set! (.-height preview-canvas-elem) screen-canvas-height)
-        (omdom/div #js {:id "painter-watcher"
+        (omdom/div #js {:id "canvas-watcher" :className "canvas-watcher"}
+          (omdom/div #js {:id "painter-watcher"
                         :style #js {:width screen-canvas-width
                                     :height screen-canvas-height}
-                        :ref "painter-watcher-ref"})))))
+                        :ref "painter-watcher-ref"}))))))

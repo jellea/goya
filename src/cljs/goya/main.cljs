@@ -1,7 +1,7 @@
 (ns goya.core
   (:require-macros [cljs.core.async.macros :refer [go]])
-	(:require [goog.dom :as dom]
-			      [goog.events :as events]
+  (:require [goog.dom :as dom]
+            [goog.events :as events]
             [om.core :as om :include-macros true]
             [om.dom :as omdom :include-macros true]
             [goya.appstate :as app]
@@ -15,14 +15,13 @@
             [goya.components.history :as history]
             [goya.components.canvas :as goyacanvas]
             [goya.components.drawing :as drawing]
+            [goya.components.info :as info]
             [goya.canvasdrawing :as canvasdrawing]
             [cljs.core.async :refer [put! chan <! alts!]]))
-
 
 (.log js/console "Welcome to Goya, the clojurescript pixel-art studio")
 
 (enable-console-print!)
-
 
 (events/listen js/document "keydown"
   #(let [event %
@@ -33,90 +32,33 @@
         (when shiftKey (timemachine/do-redo))
         (when-not shiftKey (timemachine/do-undo)))))
 
+(defn maincomponent [app owner]
+  (omdom/div nil
+    (omdom/div #js {:id "leftAppColumn" :className "LeftColumnContainer"}
+      (omdom/h1 #js {:className "app-title"}
+        (:title (:info app))
+        (omdom/h6 #js {:className "app-subtitle"}
+          (str (:subtitle (:info app)) " / " (:version (:info app)))))
+      (om/build toolsmenu/tools-menu-component (:tools app))
+      (om/build canvastools/canvas-info-component app)
+      (om/build mainmenu/menu-component app)
+      (om/build info/infocomponent nil))
 
-;; =============================================================================
-;; This got out of hand before I got the hang of OM. Subsequent version will
-;; place everything in a master component, so the app will ideally have one root
+    (om/build canvastools/cursor-pos-component app)
+    (om/build canvastools/grid-toggle-component app)
+    (om/build palette/palette-component app)
 
+    (om/build goyacanvas/canvas-minimap-component (:preview app))
+
+    (omdom/div #js {:className "TimeMachineContainer"}
+      (om/build history/header-component app)
+      (om/build history/history-list-component (:undo-history (:main-app app))))
+
+    (om/build goyacanvas/main-canvas-component (:main-app app))
+    (om/build drawing/canvas-painting-component app)))
 
 (om/root
-  (fn [app owner]
-    (omdom/h1 #js {:className "app-title"}
-      (:title app)
-      (omdom/h6 #js {:className "app-subtitle"}
-        (str (:subtitle app) " / " (:version app)))))
+  maincomponent
   app/app-state
-  {:path [:info]
-   :target (. js/document (getElementById "title"))})
-
-
-(om/root
-  mainmenu/menu-component
-  app/app-state
-  {:target (. js/document (getElementById "mainMenu"))})
-
-
-(om/root
-  palette/palette-component
-  app/app-state
-  {:target (. js/document (getElementById "palette"))})
-
-
-(om/root
-  history/header-component
-  app/app-state
-  {:target (. js/document (getElementById "timeMachineHeader"))})
-
-
-(om/root
-  history/history-list-component
-  app/app-state
-  {:target (. js/document (getElementById "undoHistory"))
-   :path [:main-app :undo-history]})
-
-
-(om/root
-  toolsmenu/tools-menu-component
-  app/app-state
-  {:target (. js/document (getElementById "tools-menu"))
-   :path [:tools]})
-
-
-(om/root
-  canvastools/cursor-pos-component
-  guistate/transient-state
-  {:target (. js/document (getElementById "cursor-pos-indicator"))})
-
-
-(om/root
-  canvastools/grid-toggle-component
-  app/app-state
-  {:target (. js/document (getElementById "grid-toggle"))})
-
-
-(om/root
-  canvastools/canvas-info-component
-  app/app-state
-  {:target (. js/document (getElementById "canvas-info"))})
-
-
-(om/root
-  goyacanvas/canvas-minimap-component
-  previewstate/preview-state
-  {:target (. js/document (getElementById "minimap-canvas"))})
-
-
-(om/root
-  goyacanvas/main-canvas-component
-  app/app-state
-  {:target (. js/document (getElementById "canvas-wrapper"))})
-
-
-(om/root
-  drawing/canvas-painting-component
-  app/app-state
-  {:target (. js/document (getElementById "canvas-watcher"))
+  {:target (. js/document (getElementById "appcontainer"))
    :tx-listen #(timemachine/handle-transaction % %)})
-
-
-

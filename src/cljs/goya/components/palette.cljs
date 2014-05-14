@@ -75,7 +75,8 @@
 
     om/IRenderState
     (render-state [this {:keys [addchan selectchan]}]
-      (omdom/div #js {:className "palette"}
-        (om/build palette-adder-component app {:init-state {:addchan addchan}})
-        (om/build palette-current-colors-component (get-in app [:main-app :palette])
-                  {:init-state {:selectchan selectchan}})))))
+      (omdom/div #js {:id "palette" :className "PaletteContainer"}
+        (omdom/div #js {:className "palette"}
+          (om/build palette-adder-component app {:init-state {:addchan addchan}})
+          (om/build palette-current-colors-component (get-in app [:main-app :palette])
+                    {:init-state {:selectchan selectchan}}))))))

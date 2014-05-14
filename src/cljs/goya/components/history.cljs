@@ -10,6 +10,7 @@
   (reify
     om/IRender
     (render [this]
+      (omdom/div #js {:id "undoHistory" :className "undo-history"}
       (apply omdom/div #js {:className "undo-list" :transitionName "example"}
         (map-indexed
            (fn [idx history-elem]
@@ -22,13 +23,12 @@
                               :onMouseLeave #(timemachine/update-preview)}
                  (omdom/i #js {:className icon-class})
                  (:action history-elem))))
-               (reverse undo-history))))))
+               (reverse undo-history)))))))
 
 
 
 (defn class-name-for-menu-item [pred]
   (if (pred) "history-menu-elem" "history-menu-elem-disabled"))
-
 
 (defn undo-button-component [app owner]
   (reify
@@ -58,9 +58,10 @@
   (reify
     om/IRender
     (render [this]
-      (omdom/div nil
+      (omdom/div #js {:id "timeMachineHeader" :className "timeMachineHeader"}
+        (omdom/div nil
         (om/build redo-button-component app)
         (om/build undo-button-component app)
         (omdom/div #js {:className "history-menu-header-text"}
           (omdom/i #js {:className "icon-back-in-time"})
-          "History")))))
+          "History"))))))

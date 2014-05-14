@@ -11,19 +11,21 @@
   (reify
     om/IRender
       (render [this]
-        (let [[x y] (:mouse-pos app)]
-          (omdom/div nil
-             (str x ", " y))))))
+        (omdom/div #js {:className "cursor-pos-indicator"}
+          (let [[x y] (:mouse-pos app)]
+            (omdom/div nil
+               (str x ", " y)))))))
 
 (defn grid-toggle-component [app owner]
   (reify
     om/IRender
       (render [this]
+        (omdom/div #js {:className "grid-toggle"}
         (let [is-active (get-in app [:tools :grid-on])
               class-name (if is-active "grid-enabled" "grid-disabled")]
          (omdom/div #js {:className class-name}
          (omdom/i #js {:className "icon-grid"
-                       :onClick (fn [e] (om/transact! app [:tools :grid-on] not))}))))))
+                       :onClick (fn [e] (om/transact! app [:tools :grid-on] not))})))))))
 
 
 ;; =============================================================================
@@ -88,6 +90,6 @@
 
     om/IRenderState
     (render-state [this {:keys [zoomchan]}]
-      (omdom/div nil
+      (omdom/div #js {:className "CanvasInfoContainer"}
         (om/build canvas-dimensions-component app)
         (om/build canvas-zoom-component app {:init-state {:zoomchan zoomchan}})))))

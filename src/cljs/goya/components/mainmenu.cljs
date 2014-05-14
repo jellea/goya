@@ -18,9 +18,7 @@
 (defn export-image []
   (let [canvas (. js/document (getElementById "main-canvas"))
         download-link (. js/document (getElementById "image-download-link"))]
-    (set! (.-href download-link) (.toDataURL canvas))
-    (.click download-link)))
-
+    (set! (.-href download-link) (.toDataURL canvas)))
 
 (defn download-history-animation [blob owner]
   (let [download-link (. js/document (getElementById "image-download-link"))]
@@ -50,7 +48,6 @@
     (.on gif "finished" #(download-history-animation % owner))
     (.on gif "progress" #(show-progress % owner))
     (.render gif)))
-
 
 (defn assoc-all [v ks value]
   (reduce #(assoc %1 %2 value) v ks))
@@ -109,7 +106,7 @@
 
     om/IRenderState
     (render-state [this {:keys [clickchan]}]
-      (omdom/div nil
+      (omdom/div #js {:className "main-menu"}
         (om/build menu-entry-component
           (get-in app [:main-menu-items :new-document])
           {:init-state {:clickchan clickchan}})

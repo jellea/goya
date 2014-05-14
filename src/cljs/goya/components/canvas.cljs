@@ -49,11 +49,12 @@
         (let [width (get-in app [:main-app :canvas-width])
               height (get-in app [:main-app :canvas-height])
               default-mini-canvas-zoom 2]
-        (omdom/canvas
-           #js {:id "minimap-canvas"
-                :width (* default-mini-canvas-zoom width)
-                :height (* default-mini-canvas-zoom height)
-                :ref "minimap-canvas-ref"})))))
+        (omdom/div #js {:className "minimap-canvas"}
+          (omdom/canvas
+             #js {:id "minimap-canvas"
+                  :width (* default-mini-canvas-zoom width)
+                  :height (* default-mini-canvas-zoom height)
+                  :ref "minimap-canvas-ref"}))))))
 
 
 (defn main-canvas-component [app owner]
@@ -73,9 +74,9 @@
         (let [width (get-in app [:main-app :canvas-width])
               height (get-in app [:main-app :canvas-height])
               zoom-factor (get-in app [:zoom-factor])]
-        (omdom/canvas
-           #js {:id "main-canvas"
-                :width (* zoom-factor width)
-                :height (* zoom-factor height)
-                :className "canvas"
-                :ref "main-canvas-ref"})))))
+        (omdom/div nil
+          (omdom/canvas
+             #js {:width (* zoom-factor width)
+                  :height (* zoom-factor height)
+                  :className "canvas"
+                  :ref "main-canvas-ref"}))))))
